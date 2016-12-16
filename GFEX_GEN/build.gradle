@@ -1,0 +1,69 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+compileJava.options.encoding = 'UTF-8'
+
+jar {
+	baseName 'gefx_gen'
+    manifest {
+        attributes 'Main-Class': 'kr.gfex.main.GfexMain'
+    }
+}
+
+task distZip(type: Zip){
+	def baseDir = { archiveName - ".zip" }
+	into("/") {
+		// shell 파일은 실행권한을 주기 위해 별도로 포함시킨다.
+		from(project.file("src/dist")) {
+	        exclude('**/*.sh')
+	    }
+		from(project.file("src/dist")) {
+	        include('**/*.sh')
+	        fileMode = 0755
+	    }
+	}
+	into("lib") {
+	    from(jar)
+	    from(project.configurations.runtime)
+	}
+}
+
+task unzip(type: Copy) {
+	from(zipTree('build/distributions/GEFX_GEN.zip'))
+	into '/dist/'
+}
+
+unzip.dependsOn distZip
+
+repositories {
+	flatDir {
+		dirs 'lib'
+	}
+    maven {
+        url 'http://repo1.maven.org/maven2'
+    }
+    maven {
+        url 'http://bits.netbeans.org/maven2/'
+    }
+    maven {
+        url 'http://central.maven.org/maven2/'
+    }
+}
+
+
+task distLib(type: Copy){
+	from(project.configurations.runtime)
+	into("/lib")
+}
+
+dependencies {
+	compile 'org.gephi:gephi-toolkit:0.9.1'
+	// junit
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+	// logback
+	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.7'
+	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+}
