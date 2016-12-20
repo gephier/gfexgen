@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'de.undercouch:gradle-download-task:3.1.2'
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
@@ -42,36 +51,30 @@ repositories {
 	flatDir {
 		dirs 'lib'
 	}
-    maven {
-        url 'http://repo1.maven.org/maven2'
-    }
-    maven {
-        url 'http://bits.netbeans.org/maven2/'
-    }
-    maven {
-        url 'http://central.maven.org/maven2/'
-    }
+    mavenCentral()
 }
 
+apply plugin: 'de.undercouch.download'
 
-task distLib(type: Copy){
-	from(project.configurations.runtime)
-	into("/lib")
+import de.undercouch.gradle.tasks.download.Download
+
+task downloadGephi(type: Download) {
+    src 'http://github.com/gephi/gephi-toolkit/releases/download/v0.9.1/gephi-toolkit-0.9.1-all.jar'
+    dest 'lib/'
+    overwrite false
 }
+
+compileJava.dependsOn downloadGephi
 
 dependencies {
-	compile 'org.gephi:gephi-toolkit:0.9.1'
 
-	compile group: 'org.gephi', name: 'graph-api', version: '0.9.1'
-	compile group: 'org.gephi', name: 'project-api', version: '0.9.1'
-	compile group: 'org.gephi', name: 'appearance-api', version: '0.9.1'
-	compile group: 'org.gephi', name: 'layout-api', version: '0.9.1'
-	compile group: 'org.gephi', name: 'layout-plugin', version: '0.9.1'
+	// gephi toolkit
+	compile name: 'gephi-toolkit-0.9.1-all'
 
-	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
-	// junit
-    testCompile group: 'junit', name: 'junit', version: '4.+'
 	// logback
 	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.7'
 	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+
+	// junit
+    testCompile group: 'junit', name: 'junit', version: '4.+'
 }
