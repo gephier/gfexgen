@@ -61,6 +61,14 @@ task distLib(type: Copy){
 
 dependencies {
 	compile 'org.gephi:gephi-toolkit:0.9.1'
+
+	compile group: 'org.gephi', name: 'graph-api', version: '0.9.1'
+	compile group: 'org.gephi', name: 'project-api', version: '0.9.1'
+	compile group: 'org.gephi', name: 'appearance-api', version: '0.9.1'
+	compile group: 'org.gephi', name: 'layout-api', version: '0.9.1'
+	compile group: 'org.gephi', name: 'layout-plugin', version: '0.9.1'
+
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 	// junit
     testCompile group: 'junit', name: 'junit', version: '4.+'
 	// logback
