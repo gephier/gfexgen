@@ -1,5 +1,9 @@
 package kr.gfex.main;
 
+import java.util.Arrays;
+
+import kr.gfex.util.GfexUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,22 +18,31 @@ public class GfexMain {
 	}
 
 	private void run(String[] args) {
-
+		// simple validation for arguments (inPath, outPath, fileNm, partnColNm, kVal)
 		if (args == null || args.length < ARGS_LEN) {
-//			logger.error("Please check the arguments.");
+			logger.error("Please check the arguments.");
 			System.exit(-1);
 			return;
 		}
-//		logger.info("GLIS HDFS Main has run.");
-//		logger.info("arguments are {}", Arrays.toString(args));
-
 		try {
-//			int coypCnt = GfexUtil.copyToHdfsFile(args[0], Arrays.copyOfRange(args, 1, args.length));
-//			logger.info("GLIS HDFS Main has completed. copyCnt = {}", coypCnt);
+			// if kVal entered...
+			int kVal = -1;
+			if(args.length > ARGS_LEN) {
+				kVal = Integer.parseInt(args[ARGS_LEN]);
+			}
+			logger.info("GfexMain has run.");
+			logger.info("arguments are {}", Arrays.toString(args));
+
+			// generate gml file
+			String gml = GfexUtil.genGml(args[0], args[1], args[2], kVal);
+			logger.info("gmlFile :"+gml);
+			// generate gexf file, legend-csv file
+			GfexUtil.genPartitionGraph(gml, args[1], args[2], args[3]);
+			logger.info("GfexMain has completed.");
 			System.exit(0);
 
 		} catch (Exception e) {
-//			logger.error("GLIS HDFS Main has failed.", e);
+			logger.info("GfexMain has failed.");
 			System.exit(-1);
 		}
 	}
